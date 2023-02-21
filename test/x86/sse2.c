@@ -3284,7 +3284,7 @@ test_simde_mm_cvtpd_pi32 (SIMDE_MUNIT_TEST_ARGS) {
     { {             SIMDE_MATH_NAN,            -SIMDE_MATH_NAN },
       {            INT32_MIN,             INT32_MIN } },
     #endif
-    #if !defined(SIMDE_FAST_CONVERSION_RANGE)
+    #if !defined(SIMDE_FAST_CONVERSION_RANGE) && (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(7,0,0)))
     { { HEDLEY_STATIC_CAST(simde_float64, HEDLEY_STATIC_CAST(int64_t, INT32_MAX) + 1), HEDLEY_STATIC_CAST(simde_float64, HEDLEY_STATIC_CAST(int64_t, INT32_MAX) - 100) },
       {              INT32_MIN,  INT32_C(  2147483547) } },
     { { HEDLEY_STATIC_CAST(simde_float64, HEDLEY_STATIC_CAST(int64_t, INT32_MIN) - 1), HEDLEY_STATIC_CAST(int64_t, INT32_MIN) + 100 },
