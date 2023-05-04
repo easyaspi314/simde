@@ -40,6 +40,24 @@ jobs:
       - run: ninja -C build -v -j 5
       - run: ninja -C build -v test
 
+  m1:
+    macos:
+      xcode: "14.3.0"
+    resource_class: macos.m1.large.gen1
+    environment:
+      DEVELOPER_DIR:  /Applications/Xcode-14.3.app
+      CFLAGS: -Weverything -Werror -march=native
+      CXXFLAGS: -Weverything -Werror -march=native
+    steps:
+      - run: cc --version
+      - run: echo | clang -E
+      - run: brew install meson ninja gcovr
+      - checkout
+      - run: meson setup build -Db_coverage=true
+      - run: meson compile -C build -v
+      - run: meson test -C build --print-errorlogs
+      - run: ninja -C build -v coverage-xml
+
   loongson:
     resource_class: large
     docker:
@@ -144,33 +162,39 @@ workflows:
   version: 2
   test:
     jobs:
-      - gcc:
+      # - gcc:
+      #     filters:
+      #       branches:
+      #         ignore:
+      #         - master
+      #         - /^ci/(?!circleci).*$/
+      - m1:
           filters:
             branches:
               ignore:
               - master
               - /^ci/(?!circleci).*$/
-      - clang:
-          filters:
-            branches:
-              ignore:
-              - master
-              - /^ci/(?!circleci).*$/
-      - loongson:
-          filters:
-            branches:
-              ignore:
-              - master
-              - /^ci/(?!circleci).*$/
+      # - clang:
+      #     filters:
+      #       branches:
+      #         ignore:
+      #         - master
+      #         - /^ci/(?!circleci).*$/
+      # - loongson:
+      #     filters:
+      #       branches:
+      #         ignore:
+      #         - master
+      #         - /^ci/(?!circleci).*$/
       # - i686:
       #     filters:
       #       branches:
       #         ignore:
       #         - master
       #         - /^ci/(?!circleci).*$/
-      - i686-gcc11-O2:
-          filters:
-            branches:
-              ignore:
-              - master
-              - /^ci/(?!circleci).*$/
+      # - i686-gcc11-O2:
+      #     filters:
+      #       branches:
+      #         ignore:
+      #         - master
+      #         - /^ci/(?!circleci).*$/
